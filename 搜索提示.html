@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="text" />
+    <ul id="results"></ul>
+</body>
+<script type="module">
+    import { getJSON } from "./ajax/index.js";
+
+    let timer = null;
+
+    const url = "http://www.imooc.com/api/http/json/search/suggest?words=js";
+
+    const searchInput = document.getElementById("text");
+    const resultsList = document.getElementById("results");
+
+    const handleEventInput = () => {
+        if (searchInput.value.trim()) {
+            getJSON(`${url}${searchInput.value.trim()}`).then(response => {
+                let html = '';
+
+                for (const item of response.data) {
+                    html += `<li>${item.word}</li>`
+                }
+
+                resultsList.innerHTML = html
+            }).catch(error => {
+                console.log(error);
+            });
+        } else {
+            resultsList.innerHTML = "";
+        }
+    }
+
+    searchInput.addEventListener("keyup", () => {
+        if (timer) {
+            clearTimeout(timer);
+        }
+
+        timer = setTimeout(() => {
+            handleEventInput();
+        }, 400);
+    })
+
+</script>
+</html>
